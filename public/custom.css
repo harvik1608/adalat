@@ -1,0 +1,67 @@
+body, .butterpop-message, h1.title,#loading-area .load-text .text-load,.jq-toast-single,.jq-toast-heading {
+	font-family: "Nunito", serif !important;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+}
+.form-control:focus {
+	border-color: #D66371 !important;
+	border: 2px solid;
+}
+.btn-primary {
+	background-color: #D66371 !important;
+	border: 1px solid #D66371;
+	color: #000 !important;
+}
+.btn-primary:hover {
+	background-color: #D66371 !important;
+	border: 1px solid #D66371 !important;
+	color: #000 !important;
+}
+.sales-cards .card h6,.sidebar .sidebar-menu > ul > li.submenu-open ul > li.active a span,.sidebar .sidebar-menu > ul li.active svg, #formAuthentication a,.user-menu .nav-item-box > a:hover {
+	color: #D66371 !important;
+}
+.sidebar .sidebar-logo #toggle_btn,.swiper-pagination.style-1 .swiper-pagination-bullet-active {
+	background: #D66371 !important;
+}
+.page-wraper,.bg-primary {
+	background-color: #D66371 !important;
+}
+.mandadory {
+    color: #FF0000;
+}
+.btn.btn-primary {
+	background-color: #D66371 !important;
+    border: 1px solid #D66371 !important;
+    color: #FFFFFF !important;
+}
+.btn.btn-primary:hover {
+	background-color: #D66371 !important;
+    border: 1px solid #D66371 !important;
+}
+.dataTables_paginate .pagination li.active a.page-link {
+	background: #D66371;
+    border-color: #D66371;
+}
+.country-flag {
+	border-radius: 100%;
+    width: 50%;
+}
+label[id$="-error"] {
+	display: none;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background: #D66371;
+}
+.text-secondary {
+	color: #FFFFFF !important;
+}
+.text-primary,.btn-link {
+	color: #D66371 !important;
+}
+.step-2,.step-3 {
+	display: none;
+}
+.input-group:focus-within .form-control {
+	border-color: #D66371 !important;
+}
