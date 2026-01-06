@@ -22,7 +22,7 @@ class AuthController extends Controller
         if(Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
             session(['groom_side' => 1]);
-            return redirect()->route('admin.dashboard');
+            return redirect("pdfs");
         }
         return back()->withErrors([
             'error' => 'Invalid email or password. Please try again.',

@@ -158,7 +158,7 @@ class PdfController extends Controller
             $log = [];
 
             foreach ($rows as $row) {
-                $loanNo = trim($row[1] ?? '');
+                $loanNo = trim($row[0] ?? '');
 
                 if ($loanNo !== '') {
                     $oldFile = $folder . "page_" . $serial . ".pdf";

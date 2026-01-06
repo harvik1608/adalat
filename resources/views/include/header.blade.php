@@ -115,12 +115,6 @@
                             <li class="submenu-open">
                                 <h6 class="submenu-hdr">Main</h6>
                                 <ul id="main_menu_list">
-                                    <li><a href="{{ route('admin.dashboard') }}"><i data-feather="box"></i><span>Dashboard</span></a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu-open">
-                                <h6 class="submenu-hdr">Other</h6>
-                                <ul id="main_menu_list">
                                     <li><a href="{{ url('pdfs') }}"><i data-feather="box"></i><span>PDF List</span></a></li>
                                 </ul>
                             </li>
