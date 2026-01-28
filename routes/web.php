@@ -12,3 +12,4 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.das
 Route::resource('pdfs', PdfController::class);
 Route::get('/load-pdfs', [PdfController::class, 'load'])->name('admin.pdf.load');
 Route::get('/settings', [DashboardController::class, 'settings'])->name('admin.settings');
+Route::get('/pdfs/remove/{id}', [PdfController::class, 'pdf_remove']);

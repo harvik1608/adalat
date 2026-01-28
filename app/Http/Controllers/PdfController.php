@@ -40,6 +40,7 @@ class PdfController extends Controller
             foreach ($rows as $index => $row) {
                 $actions = '<div class="edit-delete-action">';
                     $actions .= '<a href="' . url('pdfs/'.$row->id) . '" class="me-2 edit-icon p-2" title="Download">Download</a>';
+                    $actions .= '<a href="'.url('pdfs/remove/'.$row->id).'"onclick="return confirm(\'Are you sure?\')" class="p-2" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></a>';
                 $actions .= '</div>';
                 $formattedData[] = [
                     'id' => $start + $index + 1,
@@ -159,6 +160,7 @@ class PdfController extends Controller
 
             foreach ($rows as $row) {
                 $loanNo = trim($row[0] ?? '');
+                echo $loanNo;
 
                 if ($loanNo !== '') {
                     $oldFile = $folder . "page_" . $serial . ".pdf";
@@ -176,6 +178,7 @@ class PdfController extends Controller
                     }
                 }
                 $serial++;
+                exit;
             }
             
             return response()->json(['success' => true,'message' => $pageCount." files has been created."], 200);
@@ -219,5 +222,23 @@ class PdfController extends Controller
             return back()->with('error', 'Could not create ZIP file.');
         }
         return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
+    public function pdf_remove($id)
+    {
+        $row = Pdf::find($id);
+        if(!$row) {
+            return redirect("pdfs");
+        }
+        $folderPath = public_path('uploads/' . $row->name);
+
+        if (File::exists($folderPath)) {
+            File::deleteDirectory($folderPath); // deletes folder + all files
+        }
+
+        // optional: delete DB record
+        $row->delete();
+
+        return redirect('pdfs')->with('success', 'Folder deleted successfully'); 
     }
 }

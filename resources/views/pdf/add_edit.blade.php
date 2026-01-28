@@ -26,7 +26,7 @@
                                     <i class="ti ti-upload fs-16"></i>
                                 </span>
                                 <h6 class="mb-2"><small>Only .pdf file allow</small></h6>
-                                <p class="fs-12 mb-0"></p>
+                                <p class="fs-12 mb-0 file1"></p>
                                 <input type="file" name="pdf" id="pdf">
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                                     <i class="ti ti-upload fs-16"></i>
                                 </span>
                                 <h6 class="mb-2"><small>Only .xlsx file allow</small></h6>
-                                <p class="fs-12 mb-0"></p>
+                                <p class="fs-12 mb-0 file2"></p>
                                 <input type="file" name="xlsx" id="xlsx">
                             </div>
                         </div>
@@ -107,6 +107,14 @@
                     }
                 });
             }
+        });
+        $('#pdf').on('change', function () {
+            let fileName = this.files[0].name;
+            $('.file1').text(fileName);
+        });
+        $('#xlsx').on('change', function () {
+            let fileName = this.files[0].name;
+            $('.file2').text(fileName);
         });
     });
 </script>
