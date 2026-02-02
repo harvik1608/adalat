@@ -20,6 +20,10 @@
                 <div class="card-body profile-body">
                     <div class="row">
                         <div class="col-lg-12 mb-3">
+                            <label class="form-label">Title<span class="text-danger ms-1">*</span></label>
+                            <input type="text" class="form-control" name="title" id="title" autofocus />
+                        </div>
+                        <div class="col-lg-12 mb-3">
                             <label class="form-label">PDF<span class="text-danger ms-1">*</span></label>
                             <div class="file-drop mb-3 text-center">
                                 <span class="avatar avatar-sm bg-primary text-white mb-2">
@@ -57,6 +61,9 @@
     $(document).ready(function(){
         $("#mainForm").validate({
             rules:{
+                title:{
+                    required: true
+                },
                 pdf:{
                     required: true
                 },
@@ -65,6 +72,9 @@
                 }
             },
             messages:{
+                title:{
+                    required: "<small class='text-danger'><b>Enter title</b></small>"
+                },
                 pdf:{
                     required: "<small class='text-danger'><b>Choose PDF file</b></small>"
                 },

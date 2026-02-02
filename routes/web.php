@@ -13,3 +13,6 @@ Route::resource('pdfs', PdfController::class);
 Route::get('/load-pdfs', [PdfController::class, 'load'])->name('admin.pdf.load');
 Route::get('/settings', [DashboardController::class, 'settings'])->name('admin.settings');
 Route::get('/pdfs/remove/{id}', [PdfController::class, 'pdf_remove']);
+Route::get('/split-pdf/{id}', [PdfController::class, 'splitPdf'])->name("admin.split.pdf");
+Route::get('/rename-pdf/{id}', [PdfController::class, 'renamePdf'])->name("admin.rename.pdf");
+Route::get('/download-pdf/{id}', [PdfController::class, 'downloadPdf'])->name("admin.download.pdf");

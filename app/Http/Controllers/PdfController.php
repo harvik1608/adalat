@@ -39,11 +39,25 @@ class PdfController extends Controller
             $formattedData = [];
             foreach ($rows as $index => $row) {
                 $actions = '<div class="edit-delete-action">';
-                    $actions .= '<a href="' . url('pdfs/'.$row->id) . '" class="me-2 edit-icon p-2" title="Download">Download</a>';
+                    if($row->is_split == 0) {
+                        $actions .= '<a href="' . route('admin.split.pdf',['id' => $row->id]) . '" class="me-2 edit-icon p-2" title="Split">Split PDF</a>';
+                        $actions .= '<a style="opacity: 0.5;" class="edit-icon p-2" title="Rename">Rename PDF</a>';
+                        $actions .= '<a style="opacity: 0.5;" class="me-2 edit-icon p-2" title="Download">Download</a>';
+                    } else {
+                        $actions .= '<a style="opacity: 0.5;" class="me-2 edit-icon p-2" title="Split">Split PDF</a>';
+                        if($row->is_split == 1 && $row->is_renamed == 0) {
+                            $actions .= '<a href="' . route('admin.rename.pdf',['id' => $row->id]) . '" class="me-2 edit-icon p-2" title="Rename">Rename PDF</a>';
+                            $actions .= '<a style="opacity: 0.5;" class="me-2 edit-icon p-2" title="Download">Download</a>';
+                        } else {
+                            $actions .= '<a style="opacity: 0.5;" class="edit-icon p-2" title="Rename">Rename PDF</a>';
+                            $actions .= '<a href="' . route('admin.download.pdf',['id' => $row->id]) . '" class="me-2 edit-icon p-2" title="Download">Download</a>';
+                        }
+                    }
                     $actions .= '<a href="'.url('pdfs/remove/'.$row->id).'"onclick="return confirm(\'Are you sure?\')" class="p-2" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></a>';
                 $actions .= '</div>';
                 $formattedData[] = [
                     'id' => $start + $index + 1,
+                    'title' => $row->title,
                     'name' => $row->name,
                     'actions' => $actions
                 ];
@@ -93,101 +107,202 @@ class PdfController extends Controller
 
             $row = new Pdf;
             $row->name = $name;
+            $row->title = $post["title"];
             $row->pdf_file = $pdf_file;
             $row->xlsx_file = $xlsx_file;
             $row->created_at = date("Y-m-d H:i:s");
             $row->save();
 
-            $file = $pdf_file;
-            $source = public_path('uploads/files/' . $file);
-            $outputFolder = public_path('uploads/' . $name);
+            // $file = $pdf_file;
+            // $source = public_path('uploads/files/' . $file);
+            // $outputFolder = public_path('uploads/' . $name);
 
-            // 1️⃣ Create output folder if not exists
-            if (!File::exists($outputFolder)) {
-                File::makeDirectory($outputFolder, 0755, true);
-            }
+            // // 1️⃣ Create output folder if not exists
+            // if (!File::exists($outputFolder)) {
+            //     File::makeDirectory($outputFolder, 0755, true);
+            // }
 
-            // 2️⃣ Get last page number
-            $files = glob($outputFolder . '/page_*.pdf');
-            natsort($files);
+            // // 2️⃣ Get last page number
+            // $files = glob($outputFolder . '/page_*.pdf');
+            // natsort($files);
 
-            $no = 0;
-            if (!empty($files)) {
-                $lastFile = end($files);
-                if (preg_match('/page_(\d+)\.pdf/', $lastFile, $matches)) {
-                    $no = (int) $matches[1];
-                }
-            }
+            // $no = 0;
+            // if (!empty($files)) {
+            //     $lastFile = end($files);
+            //     if (preg_match('/page_(\d+)\.pdf/', $lastFile, $matches)) {
+            //         $no = (int) $matches[1];
+            //     }
+            // }
 
-            // 3️⃣ Split PDF
-            $pdf = new Fpdi();
-            $pageCount = $pdf->setSourceFile($source);
+            // // 3️⃣ Split PDF
+            // $pdf = new Fpdi();
+            // $pageCount = $pdf->setSourceFile($source);
 
-            for ($i = 1; $i <= $pageCount; $i++) {
-                $no++;
+            // for ($i = 1; $i <= $pageCount; $i++) {
+            //     $no++;
 
-                $newPdf = new Fpdi();
-                $newPdf->AddPage();
-                $newPdf->setSourceFile($source);
+            //     $newPdf = new Fpdi();
+            //     $newPdf->AddPage();
+            //     $newPdf->setSourceFile($source);
 
-                $templateId = $newPdf->importPage($i);
-                $newPdf->useTemplate($templateId);
+            //     $templateId = $newPdf->importPage($i);
+            //     $newPdf->useTemplate($templateId);
 
-                $outputName = $outputFolder . '/page_' . $no . '.pdf';
-                $newPdf->Output($outputName, 'F');
-            }
-            File::delete($source);
+            //     $outputName = $outputFolder . '/page_' . $no . '.pdf';
+            //     $newPdf->Output($outputName, 'F');
+            // }
+            // File::delete($source);
 
-            // rename files
-            $excelFile = public_path('uploads/files/'.$xlsx_file);
-            $folder = public_path('uploads/'.$name.'/');
+            // // rename files
+            // $excelFile = public_path('uploads/files/'.$xlsx_file);
+            // $folder = public_path('uploads/'.$name.'/');
 
-            // Check Excel file
-            if (!File::exists($excelFile)) {
-                return response()->json(['error' => 'Excel file not found'], 404);
-            }
+            // // Check Excel file
+            // if (!File::exists($excelFile)) {
+            //     return response()->json(['error' => 'Excel file not found'], 404);
+            // }
 
-            // Load Excel
-            $spreadsheet = IOFactory::load($excelFile);
-            $sheet = $spreadsheet->getActiveSheet();
-            $rows = $sheet->toArray();
+            // // Load Excel
+            // $spreadsheet = IOFactory::load($excelFile);
+            // $sheet = $spreadsheet->getActiveSheet();
+            // $rows = $sheet->toArray();
 
-            // Remove header row
-            array_shift($rows);
+            // // Remove header row
+            // array_shift($rows);
 
-            $serial = 1;
-            $log = [];
+            // $serial = 1;
+            // $log = [];
 
-            foreach ($rows as $row) {
-                $loanNo = trim($row[0] ?? '');
-                echo $loanNo;
+            // foreach ($rows as $row) {
+            //     $loanNo = trim($row[0] ?? '');
+            //     echo $loanNo;
 
-                if ($loanNo !== '') {
-                    $oldFile = $folder . "page_" . $serial . ".pdf";
-                    $newFile = $folder . $loanNo . ".pdf";
+            //     if ($loanNo !== '') {
+            //         $oldFile = $folder . "page_" . $serial . ".pdf";
+            //         $newFile = $folder . $loanNo . ".pdf";
 
-                    if (File::exists($oldFile)) {
-                        if (!File::exists($newFile)) {
-                            File::move($oldFile, $newFile);
-                            // echo "Renamed: page_$serial.pdf → $loanNo.pdf<br>";
-                        } else {
-                            // echo "Skipped (already exists): $loanNo.pdf<br>";
-                        }
-                    } else {
-                        // echo "File not found: page_$serial.pdf<br>";
-                    }
-                }
-                $serial++;
-                exit;
-            }
+            //         if (File::exists($oldFile)) {
+            //             if (!File::exists($newFile)) {
+            //                 File::move($oldFile, $newFile);
+            //                 // echo "Renamed: page_$serial.pdf → $loanNo.pdf<br>";
+            //             } else {
+            //                 // echo "Skipped (already exists): $loanNo.pdf<br>";
+            //             }
+            //         } else {
+            //             // echo "File not found: page_$serial.pdf<br>";
+            //         }
+            //     }
+            //     $serial++;
+            //     exit;
+            // }
             
-            return response()->json(['success' => true,'message' => $pageCount." files has been created."], 200);
+            return response()->json(['success' => true,'message' => "Files has been uploaded."], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false,'message' => $e->getMessage()], 200);
         }
     }
 
-    public function show($id)
+    public function splitPdf($id)
+    {
+        $row = Pdf::find($id);
+        if(!$row) {
+            return redirect("pdfs");
+        }
+        $name = $row->name;
+        $file = $row->pdf_file;
+        $source = public_path('uploads/files/' . $file);
+        $outputFolder = public_path('uploads/' . $name);
+
+        if (!File::exists($outputFolder)) {
+            File::makeDirectory($outputFolder, 0755, true);
+        }
+        $files = glob($outputFolder . '/page_*.pdf');
+        natsort($files);
+
+        $no = 0;
+        if (!empty($files)) {
+            $lastFile = end($files);
+            if (preg_match('/page_(\d+)\.pdf/', $lastFile, $matches)) {
+                $no = (int) $matches[1];
+            }
+        }
+
+        $pdf = new Fpdi();
+        $pageCount = $pdf->setSourceFile($source);
+        for ($i = 1; $i <= $pageCount; $i++) {
+            $no++;
+
+            $newPdf = new Fpdi();
+            $newPdf->AddPage();
+            $newPdf->setSourceFile($source);
+
+            $templateId = $newPdf->importPage($i);
+            $newPdf->useTemplate($templateId);
+
+            $outputName = $outputFolder . '/page_' . $no . '.pdf';
+            $newPdf->Output($outputName, 'F');
+        }
+        // File::delete($source);
+
+        $row->is_split = 1;
+        $row->save();
+
+        return back()->with('success', $pageCount." files has been created.");
+    }
+
+    public function renamePdf($id)
+    {
+        $pdf = Pdf::find($id);
+        if(!$pdf) {
+            return redirect("pdfs");
+        }
+        $name = $pdf->name;
+        $xlsx_file = $pdf->xlsx_file;
+        $excelFile = public_path('uploads/files/'.$xlsx_file);
+        $folder = public_path('uploads/'.$name.'/');
+
+        // Check Excel file
+        if (!File::exists($excelFile)) {
+            return response()->json(['error' => 'Excel file not found'], 404);
+        }
+
+        // Load Excel
+        $spreadsheet = IOFactory::load($excelFile);
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray();
+
+        // Remove header row
+        array_shift($rows);
+
+        $serial = 1;
+        $log = [];
+
+        foreach ($rows as $row) {
+            $loanNo = trim($row[0] ?? '');
+            if ($loanNo !== '') {
+                $oldFile = $folder . "page_" . $serial . ".pdf";
+                $newFile = $folder . $loanNo . ".pdf";
+
+                if (File::exists($oldFile)) {
+                    if (!File::exists($newFile)) {
+                        File::move($oldFile, $newFile);
+                    } else {
+                        //
+                    }
+                } else {
+                    // echo "File not found: page_$serial.pdf<br>";
+                }
+            }
+            $serial++;
+        }
+
+        $pdf->is_renamed = 1;
+        $pdf->save();
+
+        return back()->with('success', $serial." files has been renamed.");
+    }
+
+    public function downloadPdf($id)
     {
         $row = Pdf::find($id);
         if(!$row) {
@@ -204,10 +319,7 @@ class PdfController extends Controller
 
         $zip = new ZipArchive();
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-
-            // Get all PDFs
             $files = File::files($folderPath);
-
             foreach ($files as $file) {
                 if ($file->getExtension() === 'pdf') {
                     $zip->addFile(
@@ -216,7 +328,6 @@ class PdfController extends Controller
                     );
                 }
             }
-
             $zip->close();
         } else {
             return back()->with('error', 'Could not create ZIP file.');
@@ -233,7 +344,15 @@ class PdfController extends Controller
         $folderPath = public_path('uploads/' . $row->name);
 
         if (File::exists($folderPath)) {
-            File::deleteDirectory($folderPath); // deletes folder + all files
+            File::deleteDirectory($folderPath);
+        }
+
+        if (File::exists(public_path('uploads/files/' . $row->pdf_file))) {
+            File::delete(public_path('uploads/files/' . $row->pdf_file));
+        }
+
+        if (File::exists(public_path('uploads/files/' . $row->xlsx_file))) {
+            File::delete(public_path('uploads/files/' . $row->xlsx_file));
         }
 
         // optional: delete DB record

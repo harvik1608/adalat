@@ -26,8 +26,9 @@
                 <thead class="thead-light">
                     <tr>
                         <th width="5%">#</th>
-                        <th width="30%">PDF Name</th>
-                        <th width="10%" class="no-sort"></th>
+                        <th width="25%">Title</th>
+                        <th width="10%">Folder Name</th>
+                        <th width="60%" class="no-sort"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,6 +61,7 @@
 	            "ordering": true,
 	            "columns": [
 	                { data: 'id' },
+	                { data: 'title' },
 	                { data: 'name' },
 	                { 
 	                    data: 'actions', 
